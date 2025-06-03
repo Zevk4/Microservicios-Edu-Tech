@@ -47,9 +47,9 @@ public class RolController {
     public String eliminar(@PathVariable("id") Long id){
         boolean ok = this.rolService.eliminarRolId(id);
         if(ok){
-            return "El Curso con la id " + id + " ha sido eliminado";
+            return "El Rol con la id " + id + " ha sido eliminado";
         }else{
-            return "El Curso con la id " + id + " no existe";
+            return "El Rol con la id " + id + " no existe";
         }
     }
 
