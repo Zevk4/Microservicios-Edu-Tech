@@ -41,7 +41,7 @@ public class Evaluacion {
     @Column 
     private String estado;
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "id_curso")
     private Curso curso;
     
     public Evaluacion(String nombre, String descripcion, String tipo, LocalDateTime fecha_inicio, LocalDateTime fecha_termino, Integer duracion, double calificacionMaxima, String estado, Curso curso){
