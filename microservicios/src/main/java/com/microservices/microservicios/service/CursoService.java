@@ -47,11 +47,14 @@ public class CursoService {
 
     //Metodo para eliminar un Curso por ID
     public Boolean eliminarPorId(Long id){
-        try{
+        //Verificar antes de eliminar 
+        if (cursRepo.existsById(id)) {
             cursRepo.deleteById(id);
             return true;
-        }catch(Exception e){
+        } else {
+            // Si no existe, consideramos que no se "pudo" eliminar (porque no estaba ahí)
             return false;
         }
     }
+
 }

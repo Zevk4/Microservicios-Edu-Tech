@@ -15,6 +15,8 @@ import java.util.Arrays;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 public class RolServiceTest {
@@ -161,30 +163,39 @@ public class RolServiceTest {
     @Test
     void testEliminarRolIdExistente() {
         // Arrange
-        // Configura el mock para que deleteById no haga nada (simulando un borrado exitoso)
-        doNothing().when(rolRepo).deleteById(1L);
+        Long idExistente = 1L;
+        // Mock: Cuando el servicio pregunte si existe, devuelve true
+        when(rolRepo.existsById(idExistente)).thenReturn(true);
+        // Mock: Cuando el servicio pida eliminar, no hagas nada (simula éxito)
+        doNothing().when(rolRepo).deleteById(idExistente);
 
         // Act
-        Boolean resultado = rolService.eliminarRolId(1L);
+        Boolean resultado = rolService.eliminarRolId(idExistente);
 
         // Assert
-        assertTrue(resultado);
-        // Verifica que el método deleteById del repositorio fue llamado exactamente una vez
-        verify(rolRepo, times(1)).deleteById(1L);
+        assertTrue(resultado, "Debería retornar true si el rol existe y es eliminado");
+        // Verifica que existsById fue llamado una vez
+        verify(rolRepo, times(1)).existsById(idExistente);
+        // Verifica que deleteById fue llamado una vez
+        verify(rolRepo, times(1)).deleteById(idExistente);
     }
 
+    
     @Test
-    void testEliminarRolIdNoExistente() {
+    void testEliminarPorIdNoExistente() {
         // Arrange
-        // Simula que deleteById lanza una excepción, lo que tu catch en el servicio maneja devolviendo false
-        doThrow(new org.springframework.dao.EmptyResultDataAccessException(1)).when(rolRepo).deleteById(99L);
+        Long idInexistente = 99L;
+        // Mock: Cuando el servicio pregunte si existe, devuelve false
+        when(rolRepo.existsById(idInexistente)).thenReturn(false);
 
         // Act
-        Boolean resultado = rolService.eliminarRolId(99L);
+        Boolean resultado = rolService.eliminarRolId(idInexistente);
 
         // Assert
-        assertFalse(resultado);
-        // Verifica que el método deleteById del repositorio fue llamado exactamente una vez
-        verify(rolRepo, times(1)).deleteById(99L);
+        assertFalse(resultado, "Debería retornar false si el Rol no existe");
+        // Verifica que existsById fue llamado una vez
+        verify(rolRepo, times(1)).existsById(idInexistente);
+        // Verifica que deleteById NUNCA fue llamado (porque el curso no existía)
+        verify(rolRepo, never()).deleteById(anyLong()); 
     }
 }

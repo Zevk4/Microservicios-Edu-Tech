@@ -41,10 +41,12 @@ public class RolService {
 
     //Metodo para eliminar un Curso por ID
     public Boolean eliminarRolId(Long id){
-        try{
+        //Verificar antes de eliminar 
+        if (rolRepo.existsById(id)) {
             rolRepo.deleteById(id);
             return true;
-        }catch(Exception e){
+        } else {
+            // Si no existe, consideramos que no se "pudo" eliminar (porque no estaba ahí)
             return false;
         }
     }

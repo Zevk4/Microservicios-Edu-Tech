@@ -9,13 +9,15 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 public class CursoServiceTest {
@@ -68,7 +70,7 @@ public class CursoServiceTest {
         when(cursRepo.findAll()).thenReturn(cursos);
 
         // Act
-        ArrayList<Curso> resultado = cursoService.verCursos();
+        List<Curso> resultado = cursoService.verCursos();
 
         // Assert
         assertNotNull(resultado);
@@ -165,30 +167,38 @@ public class CursoServiceTest {
     @Test
     void testEliminarPorIdExistente() {
         // Arrange
-        // Configura el mock para que deleteById no haga nada (simulando un borrado exitoso)
-        doNothing().when(cursRepo).deleteById(1L);
+        Long idExistente = 1L;
+        // Mock: Cuando el servicio pregunte si existe, devuelve true
+        when(cursRepo.existsById(idExistente)).thenReturn(true);
+        // Mock: Cuando el servicio pida eliminar, no hagas nada (simula éxito)
+        doNothing().when(cursRepo).deleteById(idExistente);
 
         // Act
-        Boolean resultado = cursoService.eliminarPorId(1L);
+        Boolean resultado = cursoService.eliminarPorId(idExistente);
 
         // Assert
-        assertTrue(resultado);
-        // Verifica que el método deleteById del repositorio fue llamado exactamente una vez
-        verify(cursRepo, times(1)).deleteById(1L);
+        assertTrue(resultado, "Debería retornar true si el curso existe y es eliminado");
+        // Verifica que existsById fue llamado una vez
+        verify(cursRepo, times(1)).existsById(idExistente);
+        // Verifica que deleteById fue llamado una vez
+        verify(cursRepo, times(1)).deleteById(idExistente);
     }
 
     @Test
-    void testEliminarPorIdNoExistenteOConFallo() {
+    void testEliminarPorIdNoExistente() {
         // Arrange
-        // Simula que deleteById lanza una excepción (tu catch lo maneja devolviendo false)
-        doThrow(new EmptyResultDataAccessException(1)).when(cursRepo).deleteById(99L);
+        Long idInexistente = 99L;
+        // Mock: Cuando el servicio pregunte si existe, devuelve false
+        when(cursRepo.existsById(idInexistente)).thenReturn(false);
 
         // Act
-        Boolean resultado = cursoService.eliminarPorId(99L);
+        Boolean resultado = cursoService.eliminarPorId(idInexistente);
 
         // Assert
-        assertFalse(resultado);
-        // Verifica que el método deleteById del repositorio fue llamado exactamente una vez
-        verify(cursRepo, times(1)).deleteById(99L);
+        assertFalse(resultado, "Debería retornar false si el curso no existe");
+        // Verifica que existsById fue llamado una vez
+        verify(cursRepo, times(1)).existsById(idInexistente);
+        // Verifica que deleteById NUNCA fue llamado (porque el curso no existía)
+        verify(cursRepo, never()).deleteById(anyLong()); 
     }
 }

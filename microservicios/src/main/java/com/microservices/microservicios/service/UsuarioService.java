@@ -59,10 +59,11 @@ public class UsuarioService {
 
     //Metodo para eliminar un Usuario por ID
     public Boolean deleteById(Long id){
-        try{
+        if (userRepo.existsById(id)) {
             userRepo.deleteById(id);
             return true;
-        }catch(Exception e){
+        }else {
+            // Si no existe, consideramos que no se "pudo" eliminar (porque no estaba ahí)
             return false;
         }
     }

@@ -47,10 +47,12 @@ public class EvaluacionService {
 
     //Metodo para eliminar una Evaluacion por ID
     public Boolean eliminarPorId(Long id){
-        try{
+        //Verificar antes de eliminar 
+        if (evaRepo.existsById(id)) {
             evaRepo.deleteById(id);
             return true;
-        }catch(Exception e){
+        } else {
+            // Si no existe, consideramos que no se "pudo" eliminar (porque no estaba ahí)
             return false;
         }
     }
