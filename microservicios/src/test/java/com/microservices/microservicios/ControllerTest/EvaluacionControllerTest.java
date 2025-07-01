@@ -54,7 +54,7 @@ public class EvaluacionControllerTest {
 
     @Test
     void testGetEvaluaciones() throws Exception {
-        // Creamos un curso mock con tus atributos reales
+        // Creamos un curso mock con atributos reales
         Curso cursoMock = new Curso();
         cursoMock.setId(10L);
         cursoMock.setTitulo("Curso de Spring Boot");
@@ -98,7 +98,7 @@ public class EvaluacionControllerTest {
                 .andExpect(jsonPath("$._embedded.evaluacionList", hasSize(2)))
                 .andExpect(jsonPath("$._embedded.evaluacionList[0].nombre", is("Examen Final")))
                 .andExpect(jsonPath("$._embedded.evaluacionList[0].calificacionMaxima", is(100.0)))
-                .andExpect(jsonPath("$._embedded.evaluacionList[0].curso.titulo", is("Curso de Spring Boot"))) // Verificando atributo de curso
+                .andExpect(jsonPath("$._embedded.evaluacionList[0].curso.titulo", is("Curso de Spring Boot"))) 
                 .andExpect(jsonPath("$._embedded.evaluacionList[1].tipo", is("Cuestionario")))
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/evaluacion/evaluaciones")));
 
@@ -149,7 +149,7 @@ public class EvaluacionControllerTest {
                 .andExpect(jsonPath("$.id", is(3)))
                 .andExpect(jsonPath("$.nombre", is("Tarea #1")))
                 .andExpect(jsonPath("$.calificacionMaxima", is(25.0)))
-                .andExpect(jsonPath("$.curso.titulo", is("Curso de Spring Boot"))) // Verificando atributo de curso
+                .andExpect(jsonPath("$.curso.titulo", is("Curso de Spring Boot"))) 
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/evaluacion/3")));
 
         verify(evaService, times(1)).crearEvaluacion(any(Evaluacion.class));
@@ -186,7 +186,7 @@ public class EvaluacionControllerTest {
                 .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.nombre", is("Examen Parcial")))
                 .andExpect(jsonPath("$.calificacionMaxima", is(70.0)))
-                .andExpect(jsonPath("$.curso.titulo", is("Curso de Spring Boot"))) // Verificando atributo de curso
+                .andExpect(jsonPath("$.curso.titulo", is("Curso de Spring Boot"))) 
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/evaluacion/1")));
 
         verify(evaService, times(1)).buscarEvaluacion(1L);
@@ -235,7 +235,7 @@ public class EvaluacionControllerTest {
                 .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.nombre", is("Examen Final (Revisado)")))
                 .andExpect(jsonPath("$.calificacionMaxima", is(100.0)))
-                .andExpect(jsonPath("$.curso.titulo", is("Curso de Spring Boot"))) // Verificando atributo de curso
+                .andExpect(jsonPath("$.curso.titulo", is("Curso de Spring Boot"))) 
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/evaluacion/1")));
 
         verify(evaService, times(1)).actualizarEvaluacion(any(Evaluacion.class), eq(1L));
@@ -246,9 +246,6 @@ public class EvaluacionControllerTest {
         Evaluacion evaParaActualizar = new Evaluacion();
         evaParaActualizar.setNombre("No existente");
         evaParaActualizar.setCalificacionMaxima(50.0);
-        // No es necesario setear el curso si se espera que el servicio devuelva null,
-        // ya que el controlador no lo procesaría en ese caso.
-
         when(evaService.actualizarEvaluacion(any(Evaluacion.class), eq(99L))).thenReturn(null);
 
         mockMvc.perform(put("/evaluacion/{id}", 99L)

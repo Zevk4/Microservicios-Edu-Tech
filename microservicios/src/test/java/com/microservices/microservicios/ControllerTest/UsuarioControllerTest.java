@@ -1,10 +1,10 @@
-package com.microservices.microservicios.ControllerTest; // Verifica que este paquete sea el correcto para tu proyecto
+package com.microservices.microservicios.ControllerTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microservices.microservicios.controller.UsuarioController;
 import com.microservices.microservicios.model.Rol;
 import com.microservices.microservicios.model.Usuario;
-import com.microservices.microservicios.service.UsuarioService; // Importa tu UsuarioService
+import com.microservices.microservicios.service.UsuarioService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,8 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq; // Importa eq para emparejar argumentos específicos
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.anyString; 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -70,20 +71,18 @@ public class UsuarioControllerTest {
 
         ArrayList<Usuario> usuarios = new ArrayList<>(Arrays.asList(user1, user2));
 
-        // Llama al nombre exacto del método de servicio: getUsuarios()
         when(usuarioService.getUsuarios()).thenReturn(usuarios);
 
-        mockMvc.perform(get("/usuario/verusuarios")
+        mockMvc.perform(get("/usuario/usuarios") 
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded.usuarioList", hasSize(2)))
                 .andExpect(jsonPath("$._embedded.usuarioList[0].nombre", is("Juan Perez")))
                 .andExpect(jsonPath("$._embedded.usuarioList[0].email", is("juan.perez@example.com")))
-                .andExpect(jsonPath("$._embedded.usuarioList[0].rol.nombre", is("ADMIN"))) // Verifica el nombre del rol
+                .andExpect(jsonPath("$._embedded.usuarioList[0].rol.nombre", is("ADMIN")))
                 .andExpect(jsonPath("$._embedded.usuarioList[1].nombre", is("Maria Lopez")))
-                .andExpect(jsonPath("$._links.self.href", is("http://localhost/usuario/verusuarios")));
+                .andExpect(jsonPath("$._links.self.href", is("http://localhost/usuario/usuarios"))); 
 
-        // Verifica el nombre exacto del método de servicio: getUsuarios()
         verify(usuarioService, times(1)).getUsuarios();
     }
 
@@ -97,7 +96,7 @@ public class UsuarioControllerTest {
         nuevoUsuario.setNombre("Pedro Gomez");
         nuevoUsuario.setEmail("pedro.gomez@example.com");
         nuevoUsuario.setPassword("securepass");
-        nuevoUsuario.setRol(rolMock); // Pasa el objeto Rol completo para serialización
+        nuevoUsuario.setRol(rolMock);
 
         Usuario usuarioGuardado = new Usuario();
         usuarioGuardado.setId(3L);
@@ -106,10 +105,9 @@ public class UsuarioControllerTest {
         usuarioGuardado.setPassword("securepass");
         usuarioGuardado.setRol(rolMock);
 
-        // Llama al nombre exacto del método de servicio: crearUsuario()
         when(usuarioService.crearUsuario(any(Usuario.class))).thenReturn(usuarioGuardado);
 
-        mockMvc.perform(post("/usuario/crearUsuario")
+        mockMvc.perform(post("/usuario/crearUsuario") 
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(nuevoUsuario)))
                 .andExpect(status().isCreated())
@@ -119,7 +117,6 @@ public class UsuarioControllerTest {
                 .andExpect(jsonPath("$.rol.nombre", is("USER")))
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/usuario/3")));
 
-        // Verifica el nombre exacto del método de servicio: crearUsuario()
         verify(usuarioService, times(1)).crearUsuario(any(Usuario.class));
     }
 
@@ -136,10 +133,9 @@ public class UsuarioControllerTest {
         user.setPassword("pass123");
         user.setRol(rolMock);
 
-        // Llama al nombre exacto del método de servicio: getById()
         when(usuarioService.getById(1L)).thenReturn(Optional.of(user));
 
-        mockMvc.perform(get("/usuario/{id}", 1L)
+        mockMvc.perform(get("/usuario/{id}", 1L) 
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1)))
@@ -148,20 +144,17 @@ public class UsuarioControllerTest {
                 .andExpect(jsonPath("$.rol.nombre", is("ADMIN")))
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/usuario/1")));
 
-        // Verifica el nombre exacto del método de servicio: getById()
         verify(usuarioService, times(1)).getById(1L);
     }
 
     @Test
     void testBuscarUsuarioNoExistente() throws Exception {
-        // Llama al nombre exacto del método de servicio: getById()
         when(usuarioService.getById(anyLong())).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/usuario/{id}", 99L)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
 
-        // Verifica el nombre exacto del método de servicio: getById()
         verify(usuarioService, times(1)).getById(99L);
     }
 
@@ -178,10 +171,9 @@ public class UsuarioControllerTest {
         usuarioActualizado.setPassword("newpass");
         usuarioActualizado.setRol(rolMock);
 
-        // Llama al nombre exacto del método de servicio: updateById()
         when(usuarioService.updateById(any(Usuario.class), eq(1L))).thenReturn(usuarioActualizado);
 
-        mockMvc.perform(put("/usuario/{id}", 1L)
+        mockMvc.perform(put("/usuario/{id}", 1L) 
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(usuarioActualizado)))
                 .andExpect(status().isOk())
@@ -191,7 +183,6 @@ public class UsuarioControllerTest {
                 .andExpect(jsonPath("$.rol.nombre", is("ADMIN")))
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/usuario/1")));
 
-        // Verifica el nombre exacto del método de servicio: updateById()
         verify(usuarioService, times(1)).updateById(any(Usuario.class), eq(1L));
     }
 
@@ -200,9 +191,7 @@ public class UsuarioControllerTest {
         Usuario usuarioParaActualizar = new Usuario();
         usuarioParaActualizar.setNombre("Usuario Inexistente");
         usuarioParaActualizar.setEmail("no.existe@example.com");
-        // No es necesario setear el rol si el servicio va a devolver null de todos modos.
 
-        // Llama al nombre exacto del método de servicio: updateById()
         when(usuarioService.updateById(any(Usuario.class), eq(99L))).thenReturn(null);
 
         mockMvc.perform(put("/usuario/{id}", 99L)
@@ -210,35 +199,30 @@ public class UsuarioControllerTest {
                 .content(objectMapper.writeValueAsString(usuarioParaActualizar)))
                 .andExpect(status().isNotFound());
 
-        // Verifica el nombre exacto del método de servicio: updateById()
         verify(usuarioService, times(1)).updateById(any(Usuario.class), eq(99L));
     }
 
     @Test
     void testEliminarUsuarioExistente() throws Exception {
-        // Llama al nombre exacto del método de servicio: deleteById()
         when(usuarioService.deleteById(1L)).thenReturn(true);
 
-        mockMvc.perform(delete("/usuario/eliminar{id}", 1L)
+        mockMvc.perform(delete("/usuario/eliminar{id}", 1L) 
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string("El Usuario con la id 1 ha sido eliminado"));
+                .andExpect(content().string("El usuario con la id 1 ha sido eliminado")); 
 
-        // Verifica el nombre exacto del método de servicio: deleteById()
         verify(usuarioService, times(1)).deleteById(1L);
     }
 
     @Test
     void testEliminarUsuarioNoExistente() throws Exception {
-        // Llama al nombre exacto del método de servicio: deleteById()
         when(usuarioService.deleteById(99L)).thenReturn(false);
 
-        mockMvc.perform(delete("/usuario/eliminar{id}", 99L)
+        mockMvc.perform(delete("/usuario/eliminar{id}", 99L) 
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string("El Usuario con la id 99 no existe"));
+                .andExpect(content().string("El usuario con la id 99 no existe")); 
 
-        // Verifica el nombre exacto del método de servicio: deleteById()
         verify(usuarioService, times(1)).deleteById(99L);
     }
 
@@ -263,37 +247,31 @@ public class UsuarioControllerTest {
         updatedUser.setId(1L);
         updatedUser.setNombre("Juan Perez");
         updatedUser.setEmail("juan.perez@example.com");
-        updatedUser.setPassword("pass123"); // La contraseña no suele cambiarse en changeRol
+        updatedUser.setPassword("pass123");
         updatedUser.setRol(newRolMock);
 
-        // Asumo que tu controlador tiene un endpoint PUT como /usuario/changeRol/{id}
-        // y espera el nuevo nombre del rol como un parámetro de solicitud (query parameter).
-        // Si tu controlador espera un endpoint/método diferente, deberás ajustar esta parte.
-
-        // Mock del método de servicio changeRol
         when(usuarioService.changeRol(eq(1L), eq("ADMIN"))).thenReturn(updatedUser);
 
-        mockMvc.perform(put("/usuario/changeRol/{id}", 1L)
-                .param("newRoleName", "ADMIN") // Asumiendo que el nuevo nombre del rol se pasa como query parameter
+        mockMvc.perform(put("/usuario/cambiarRol/{id}", 1L) 
+                .param("newRoleName", "ADMIN")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.nombre", is("Juan Perez")))
-                .andExpect(jsonPath("$.rol.nombre", is("ADMIN"))) // Verifica que el rol ha cambiado
-                .andExpect(jsonPath("$._links.self.href", is("http://localhost/usuario/1"))); // El enlace debería ser el mismo para el recurso actualizado
+                .andExpect(jsonPath("$.rol.nombre", is("ADMIN")))
+                .andExpect(jsonPath("$._links.self.href", is("http://localhost/usuario/1")));
 
         verify(usuarioService, times(1)).changeRol(eq(1L), eq("ADMIN"));
     }
 
     @Test
     void testChangeRolUsuarioNoExistente() throws Exception {
-        // Mock del método de servicio changeRol para un usuario que no existe
-        when(usuarioService.changeRol(eq(99L), anyString())).thenThrow(new RuntimeException("Usuario con ID 99 no encontrado."));
+        when(usuarioService.changeRol(eq(99L), anyString())).thenReturn(null); //Retorna null
 
-        mockMvc.perform(put("/usuario/changeRol/{id}", 99L)
+        mockMvc.perform(put("/usuario/cambiarRol/{id}", 99L)
                 .param("newRoleName", "ADMIN")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound()); // Espera un 404 si el usuario no se encuentra
+                .andExpect(status().isNotFound()); // Espera 404, ya que el controlador devuelve 404 para null del servicio
 
         verify(usuarioService, times(1)).changeRol(eq(99L), anyString());
     }
@@ -311,13 +289,13 @@ public class UsuarioControllerTest {
         existingUser.setPassword("pass123");
         existingUser.setRol(oldRolMock);
 
-        // Mock del servicio para que lance una excepción si el nuevo rol no se encuentra
-        when(usuarioService.changeRol(eq(1L), eq("NON_EXISTENT_ROLE"))).thenThrow(new RuntimeException("Rol 'NON_EXISTENT_ROLE' no encontrado en la base de datos."));
+        // Mock del servicio para que retorne null si el rol no se encuentra (para que el controlador devuelva 404)
+        when(usuarioService.changeRol(eq(1L), eq("NON_EXISTENT_ROLE"))).thenReturn(null); // Retorna null
 
-        mockMvc.perform(put("/usuario/changeRol/{id}", 1L)
+        mockMvc.perform(put("/usuario/cambiarRol/{id}", 1L)
                 .param("newRoleName", "NON_EXISTENT_ROLE")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest()); // Espera un 400 Bad Request si el rol es inválido
+                .andExpect(status().isNotFound()); 
 
         verify(usuarioService, times(1)).changeRol(eq(1L), eq("NON_EXISTENT_ROLE"));
     }

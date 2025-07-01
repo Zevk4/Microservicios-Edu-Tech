@@ -1,9 +1,9 @@
-package com.microservices.microservicios.ControllerTest; // Asegúrate que este paquete coincida con la ruta real
+package com.microservices.microservicios.ControllerTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microservices.microservicios.controller.RolController;
 import com.microservices.microservicios.model.Rol;
-import com.microservices.microservicios.service.RolService; // Importar tu RolService
+import com.microservices.microservicios.service.RolService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +22,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq; 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -33,7 +34,7 @@ public class RolControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private RolService rolService; // Aquí se inyecta el mock de tu RolService
+    private RolService rolService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -58,10 +59,9 @@ public class RolControllerTest {
 
         ArrayList<Rol> roles = new ArrayList<>(Arrays.asList(rol1, rol2));
 
-        // Aquí llamamos a rolService.verRoles()
         when(rolService.verRoles()).thenReturn(roles);
 
-        mockMvc.perform(get("/rol/roles")
+        mockMvc.perform(get("/rol/roles") 
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded.rolList", hasSize(2)))
@@ -69,7 +69,6 @@ public class RolControllerTest {
                 .andExpect(jsonPath("$._embedded.rolList[1].nombre", is("USER")))
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/rol/roles")));
 
-        // Verificamos que se llamó a rolService.verRoles()
         verify(rolService, times(1)).verRoles();
     }
 
@@ -82,18 +81,16 @@ public class RolControllerTest {
         rolGuardado.setId(3L);
         rolGuardado.setNombre("EDITOR");
 
-        // Aquí llamamos a rolService.guardar()
         when(rolService.guardar(any(Rol.class))).thenReturn(rolGuardado);
 
-        mockMvc.perform(post("/rol/crearRol")
+        mockMvc.perform(post("/rol/roles") 
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(nuevoRol)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", is(3)))
                 .andExpect(jsonPath("$.nombre", is("EDITOR")))
-                .andExpect(jsonPath("$._links.self.href", is("http://localhost/rol/3")));
+                .andExpect(jsonPath("$._links.self.href", is("http://localhost/rol/3"))); 
 
-        // Verificamos que se llamó a rolService.guardar()
         verify(rolService, times(1)).guardar(any(Rol.class));
     }
 
@@ -103,30 +100,26 @@ public class RolControllerTest {
         rol.setId(1L);
         rol.setNombre("ADMIN");
 
-        // Aquí llamamos a rolService.buscarRoles()
         when(rolService.buscarRoles(1L)).thenReturn(Optional.of(rol));
 
-        mockMvc.perform(get("/rol/{id}", 1L)
+        mockMvc.perform(get("/rol/{id}", 1L) 
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.nombre", is("ADMIN")))
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/rol/1")));
 
-        // Verificamos que se llamó a rolService.buscarRoles()
         verify(rolService, times(1)).buscarRoles(1L);
     }
 
     @Test
     void testBuscarRolNoExistente() throws Exception {
-        // Aquí llamamos a rolService.buscarRoles()
         when(rolService.buscarRoles(anyLong())).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/rol/{id}", 99L)
+        mockMvc.perform(get("/rol/{id}", 99L) 
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
 
-        // Verificamos que se llamó a rolService.buscarRoles()
         verify(rolService, times(1)).buscarRoles(99L);
     }
 
@@ -136,10 +129,9 @@ public class RolControllerTest {
         rolActualizado.setId(1L);
         rolActualizado.setNombre("SUPER_ADMIN");
 
-        // Aquí llamamos a rolService.actualizarRol()
         when(rolService.actualizarRol(any(Rol.class), eq(1L))).thenReturn(rolActualizado);
 
-        mockMvc.perform(put("/rol/{id}", 1L)
+        mockMvc.perform(put("/rol/{id}", 1L) 
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(rolActualizado)))
                 .andExpect(status().isOk())
@@ -147,7 +139,6 @@ public class RolControllerTest {
                 .andExpect(jsonPath("$.nombre", is("SUPER_ADMIN")))
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/rol/1")));
 
-        // Verificamos que se llamó a rolService.actualizarRol()
         verify(rolService, times(1)).actualizarRol(any(Rol.class), eq(1L));
     }
 
@@ -156,46 +147,38 @@ public class RolControllerTest {
         Rol rolParaActualizar = new Rol();
         rolParaActualizar.setNombre("ROL_INEXISTENTE");
 
-        // Aquí llamamos a rolService.actualizarRol()
-        // Aunque tu servicio lanza una excepción si no encuentra el ID, para la prueba del controlador
-        // mockeamos el servicio para que devuelva 'null', lo que el controlador debería manejar
-        // como un caso de "no encontrado" (404).
+        // El controlador espera 'null' para un 404
         when(rolService.actualizarRol(any(Rol.class), eq(99L))).thenReturn(null);
 
-        mockMvc.perform(put("/rol/{id}", 99L)
+        mockMvc.perform(put("/rol/{id}", 99L) 
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(rolParaActualizar)))
                 .andExpect(status().isNotFound());
 
-        // Verificamos que se llamó a rolService.actualizarRol()
         verify(rolService, times(1)).actualizarRol(any(Rol.class), eq(99L));
     }
 
     @Test
     void testEliminarRolExistente() throws Exception {
-        // Aquí llamamos a rolService.eliminarRolId()
         when(rolService.eliminarRolId(1L)).thenReturn(true);
 
-        mockMvc.perform(delete("/rol/eliminar{id}", 1L)
+        mockMvc.perform(delete("/rol/{id}", 1L) 
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string("El Rol con la id 1 ha sido eliminado"));
 
-        // Verificamos que se llamó a rolService.eliminarRolId()
         verify(rolService, times(1)).eliminarRolId(1L);
     }
 
     @Test
     void testEliminarRolNoExistente() throws Exception {
-        // Aquí llamamos a rolService.eliminarRolId()
         when(rolService.eliminarRolId(99L)).thenReturn(false);
 
-        mockMvc.perform(delete("/rol/eliminar{id}", 99L)
+        mockMvc.perform(delete("/rol/{id}", 99L) 
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("El Rol con la id 99 no existe"));
 
-        // Verificamos que se llamó a rolService.eliminarRolId()
         verify(rolService, times(1)).eliminarRolId(99L);
     }
 }

@@ -1,4 +1,4 @@
-package com.microservices.microservicios.ServiceTest; // Verifica que este paquete sea el correcto
+package com.microservices.microservicios.ServiceTest;
 
 import com.microservices.microservicios.model.Curso;
 import com.microservices.microservicios.model.Evaluacion;
@@ -21,18 +21,17 @@ import static org.mockito.Mockito.*;
 
 public class EvaluacionServiceTest {
 
-    @Mock // Mockea el repositorio
+    @Mock
     private EvaluacionRepository evaRepo;
 
-    @InjectMocks // Inyecta los mocks en la instancia de EvaluacionService
+    @InjectMocks
     private EvaluacionService evaluacionService;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this); // Inicializa los mocks antes de cada prueba
+        MockitoAnnotations.openMocks(this);
     }
 
-    // Método de utilidad para crear un Curso mock
     private Curso createMockCurso() {
         Curso curso = new Curso();
         curso.setId(10L);
@@ -53,7 +52,7 @@ public class EvaluacionServiceTest {
                 LocalDateTime.now(), LocalDateTime.now().plusHours(1), 60, 100.0, "Pendiente", curso);
         Evaluacion evaluacionGuardada = new Evaluacion("Examen Inicial", "Primer examen", "Examen",
                 LocalDateTime.now(), LocalDateTime.now().plusHours(1), 60, 100.0, "Pendiente", curso);
-        evaluacionGuardada.setId(1L); // Asignamos un ID para simular que fue guardada
+        evaluacionGuardada.setId(1L);
 
         when(evaRepo.save(any(Evaluacion.class))).thenReturn(evaluacionGuardada);
 
@@ -141,7 +140,7 @@ public class EvaluacionServiceTest {
                 LocalDateTime.now(), LocalDateTime.now().plusDays(2), 60, 15.0, "Revisado", curso);
 
         when(evaRepo.findById(1L)).thenReturn(Optional.of(evaluacionExistente));
-        when(evaRepo.save(any(Evaluacion.class))).thenReturn(evaluacionActualizadaData); // El save devolverá los datos actualizados
+        when(evaRepo.save(any(Evaluacion.class))).thenReturn(evaluacionActualizadaData);
 
         // Act
         Evaluacion resultado = evaluacionService.actualizarEvaluacion(evaluacionActualizadaData, 1L);
@@ -154,7 +153,7 @@ public class EvaluacionServiceTest {
         assertEquals(15.0, resultado.getCalificacionMaxima());
         assertEquals(60, resultado.getDuracion());
         verify(evaRepo, times(1)).findById(1L);
-        verify(evaRepo, times(1)).save(evaluacionExistente); // Verifica que se guarde la instancia modificada
+        verify(evaRepo, times(1)).save(evaluacionExistente);
     }
 
     @Test
@@ -166,40 +165,47 @@ public class EvaluacionServiceTest {
         when(evaRepo.findById(anyLong())).thenReturn(Optional.empty());
 
         // Act & Assert
-        // El método .get() en un Optional.empty() lanza NoSuchElementException
         assertThrows(java.util.NoSuchElementException.class, () -> {
             evaluacionService.actualizarEvaluacion(evaluacionActualizadaData, 99L);
         });
 
         verify(evaRepo, times(1)).findById(99L);
-        verify(evaRepo, never()).save(any(Evaluacion.class)); // Asegura que save nunca fue llamado
+        verify(evaRepo, never()).save(any(Evaluacion.class));
     }
 
     @Test
     void testEliminarPorIdExistente() {
         // Arrange
-        doNothing().when(evaRepo).deleteById(1L); // Configura el mock para que deleteById no haga nada (éxito)
+        Long idExistente = 1L;
+        // Mockea que el ID existe
+        when(evaRepo.existsById(idExistente)).thenReturn(true); 
+        // Mockea el comportamiento de deleteById
+        doNothing().when(evaRepo).deleteById(idExistente);
 
         // Act
-        Boolean resultado = evaluacionService.eliminarPorId(1L);
+        Boolean resultado = evaluacionService.eliminarPorId(idExistente);
 
         // Assert
-        assertTrue(resultado);
-        verify(evaRepo, times(1)).deleteById(1L);
+        assertTrue(resultado, "El servicio debería indicar que se pudo eliminar un curso existente");
+        // Verifica que existsById fue llamado una vez
+        verify(evaRepo, times(1)).existsById(idExistente); // <-- Nueva verificación
+        // Verifica que deleteById fue llamado una vez
+        verify(evaRepo, times(1)).deleteById(idExistente);
     }
 
     @Test
     void testEliminarPorIdNoExistente() {
         // Arrange
-        // Simula que deleteById lanza una excepción (por ejemplo, EmptyResultDataAccessException si JPA lo hace)
-        // Aunque tu catch atrapa "Exception", simularemos una común para deleciones fallidas
-        doThrow(new org.springframework.dao.EmptyResultDataAccessException(1)).when(evaRepo).deleteById(99L);
+        Long idNoExistente = 99L;
+        // Mockea que el ID NO existe
+        when(evaRepo.existsById(idNoExistente)).thenReturn(false); 
 
-        // Act
-        Boolean resultado = evaluacionService.eliminarPorId(99L);
+        Boolean resultado = evaluacionService.eliminarPorId(idNoExistente);
 
-        // Assert
-        assertFalse(resultado);
-        verify(evaRepo, times(1)).deleteById(99L);
+        assertFalse(resultado, "El servicio debería indicar que no se pudo eliminar un curso inexistente");
+        // Asegurarse de que existsById fue llamado una vez
+        verify(evaRepo, times(1)).existsById(idNoExistente);
+        // Asegurarse de que deleteById NUNCA fue llamado, porque el servicio no debería intentarlo si no existe
+        verify(evaRepo, never()).deleteById(anyLong()); 
     }
 }

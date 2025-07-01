@@ -36,18 +36,13 @@ public class CursoServiceTest {
 
     @Test
     void testGuardarCurso() {
-        // Arrange
         Curso cursoEntrada = new Curso("Java Avanzado", "Programación", "Curso completo de Java", "Dr. Code", 199.99, 4.8);
         Curso cursoGuardado = new Curso("Java Avanzado", "Programación", "Curso completo de Java", "Dr. Code", 199.99, 4.8);
         cursoGuardado.setId(1L); // Simula que el repositorio le asigna un ID
 
         // Configura el mock para que cuando se llame a save, devuelva cursoGuardado
         when(cursRepo.save(any(Curso.class))).thenReturn(cursoGuardado);
-
-        // Act
         Curso resultado = cursoService.guardar(cursoEntrada);
-
-        // Assert
         assertNotNull(resultado);
         assertEquals(1L, resultado.getId());
         assertEquals("Java Avanzado", resultado.getTitulo());
@@ -58,7 +53,6 @@ public class CursoServiceTest {
 
     @Test
     void testVerCursos() {
-        // Arrange
         Curso cur1 = new Curso("Python Básico", "Programación", "Introducción a Python", "Ana Smith", 49.99, 4.0);
         cur1.setId(1L);
         Curso cur2 = new Curso("Diseño UX/UI", "Diseño", "Principios de diseño", "Luis Garcia", 79.99, 4.5);
@@ -69,10 +63,8 @@ public class CursoServiceTest {
         // Configura el mock para que cuando se llame a findAll, devuelva la lista de cursos
         when(cursRepo.findAll()).thenReturn(cursos);
 
-        // Act
         List<Curso> resultado = cursoService.verCursos();
 
-        // Assert
         assertNotNull(resultado);
         assertEquals(2, resultado.size());
         assertEquals("Python Básico", resultado.get(0).getTitulo());
@@ -83,17 +75,13 @@ public class CursoServiceTest {
 
     @Test
     void testBuscarCursoExistente() {
-        // Arrange
         Curso curso = new Curso("Marketing Digital", "Negocios", "Estrategias de marketing", "Eva Blanco", 120.00, 4.7);
         curso.setId(3L);
 
         // Configura el mock para que cuando se llame a findById con 3L, devuelva el curso
         when(cursRepo.findById(3L)).thenReturn(Optional.of(curso));
-
-        // Act
         Optional<Curso> resultado = cursoService.buscarCurso(3L);
 
-        // Assert
         assertTrue(resultado.isPresent());
         assertEquals(3L, resultado.get().getId());
         assertEquals("Marketing Digital", resultado.get().getTitulo());
@@ -103,14 +91,11 @@ public class CursoServiceTest {
 
     @Test
     void testBuscarCursoNoExistente() {
-        // Arrange
         // Configura el mock para que cuando se llame a findById con cualquier Long, devuelva un Optional vacío
         when(cursRepo.findById(anyLong())).thenReturn(Optional.empty());
 
-        // Act
         Optional<Curso> resultado = cursoService.buscarCurso(99L);
 
-        // Assert
         assertFalse(resultado.isPresent());
         // Verifica que el método findById del repositorio fue llamado exactamente una vez con 99L
         verify(cursRepo, times(1)).findById(99L);
@@ -118,10 +103,8 @@ public class CursoServiceTest {
 
     @Test
     void testActualizarCursoExistente() {
-        // Arrange
         Curso cursoExistente = new Curso("Programación C++", "Programación", "C++ básico", "Pedro Coder", 80.00, 4.2);
         cursoExistente.setId(1L);
-
         Curso cursoActualizadoData = new Curso("Programación C++ Avanzado", "Programación", "C++ avanzado y moderno", "Pedro Coder", 150.00, 4.6); // Datos para actualizar
 
         // Configura mocks:
@@ -130,10 +113,8 @@ public class CursoServiceTest {
         // 2. Cuando se guarde la instancia modificada, devolver esa misma instancia.
         when(cursRepo.save(any(Curso.class))).thenReturn(cursoExistente); // save devolverá la misma instancia modificada
 
-        // Act
         Curso resultado = cursoService.actualizarCurso(cursoActualizadoData, 1L);
 
-        // Assert
         assertNotNull(resultado);
         assertEquals(1L, resultado.getId());
         assertEquals("Programación C++ Avanzado", resultado.getTitulo()); // Verifica que el título fue actualizado
@@ -146,14 +127,11 @@ public class CursoServiceTest {
 
     @Test
     void testActualizarCursoNoExistenteDebeLanzarExcepcion() {
-        // Arrange
         Curso cursoParaActualizar = new Curso("Curso Inexistente", "Categoria", "Desc", "Instructor", 1.0, 1.0);
 
         // Configura el mock para que findById devuelva un Optional vacío
         when(cursRepo.findById(anyLong())).thenReturn(Optional.empty());
 
-        // Act & Assert
-        // El método .get() en un Optional.empty() lanza NoSuchElementException en tu servicio
         assertThrows(java.util.NoSuchElementException.class, () -> {
             cursoService.actualizarCurso(cursoParaActualizar, 99L);
         });
@@ -166,17 +144,14 @@ public class CursoServiceTest {
 
     @Test
     void testEliminarPorIdExistente() {
-        // Arrange
         Long idExistente = 1L;
         // Mock: Cuando el servicio pregunte si existe, devuelve true
         when(cursRepo.existsById(idExistente)).thenReturn(true);
-        // Mock: Cuando el servicio pida eliminar, no hagas nada (simula éxito)
+        // Mock: Cuando el servicio pida eliminar, no haga nada
         doNothing().when(cursRepo).deleteById(idExistente);
 
-        // Act
         Boolean resultado = cursoService.eliminarPorId(idExistente);
 
-        // Assert
         assertTrue(resultado, "Debería retornar true si el curso existe y es eliminado");
         // Verifica que existsById fue llamado una vez
         verify(cursRepo, times(1)).existsById(idExistente);
@@ -186,15 +161,12 @@ public class CursoServiceTest {
 
     @Test
     void testEliminarPorIdNoExistente() {
-        // Arrange
         Long idInexistente = 99L;
         // Mock: Cuando el servicio pregunte si existe, devuelve false
         when(cursRepo.existsById(idInexistente)).thenReturn(false);
 
-        // Act
         Boolean resultado = cursoService.eliminarPorId(idInexistente);
 
-        // Assert
         assertFalse(resultado, "Debería retornar false si el curso no existe");
         // Verifica que existsById fue llamado una vez
         verify(cursRepo, times(1)).existsById(idInexistente);

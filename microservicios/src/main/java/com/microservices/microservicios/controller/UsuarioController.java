@@ -140,27 +140,27 @@ public class UsuarioController {
 
     @Operation(summary = "Cambiar el rol de un usuario", description = "Actualiza el rol de un usuario específico por su ID, retornando el usuario actualizado con enlaces HATEOAS.")
     @ApiResponse(responseCode = "200", description = "Rol del usuario actualizado exitosamente",
-                 content = @Content(mediaType = "application/json", schema = @Schema(implementation = EntityModel.class)))
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = EntityModel.class)))
     @ApiResponse(responseCode = "404", description = "Usuario no encontrado",
-                 content = @Content(mediaType = "application/json"))
+                    content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "400", description = "Solicitud inválida (ej. el nuevo rol es nulo o inválido)",
-                 content = @Content(mediaType = "application/json"))
+                    content = @Content(mediaType = "application/json"))
     @PutMapping("/cambiarRol/{id}")
-    public ResponseEntity<EntityModel<Usuario>> cambiarRol( // Cambiado el tipo de retorno
-            @Parameter(description = "ID del usuario cuyo rol se va a cambiar", required = true)
-            @PathVariable("id") Long id,
-            @Parameter(description = "Nuevo nombre del rol para el usuario", required = true)
-            @RequestParam("newRoleName") String nuevoRol) {
+    public ResponseEntity<EntityModel<Usuario>> cambiarRol(
+                @Parameter(description = "ID del usuario cuyo rol se va a cambiar", required = true)
+                @PathVariable("id") Long id,
+                @Parameter(description = "Nuevo nombre del rol para el usuario", required = true)
+                @RequestParam("newRoleName") String nuevoRol) {
         Usuario actualizado = userService.changeRol(id, nuevoRol);
-        if (actualizado == null) { // Asumiendo que changeRol devuelve null si no encuentra el usuario
+        if (actualizado == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         EntityModel<Usuario> entityModel = EntityModel.of(actualizado,
-            linkTo(methodOn(UsuarioController.class).getById(actualizado.getId())).withSelfRel(),
+            linkTo(methodOn(UsuarioController.class).getById(actualizado.getId())).withSelfRel(), // <-- ¡CORREGIDO AQUÍ!
             linkTo(methodOn(UsuarioController.class).getUsuarios()).withRel("all_users"),
             linkTo(methodOn(UsuarioController.class).update(null, actualizado.getId())).withRel("update_user"),
             linkTo(methodOn(UsuarioController.class).eliminar(actualizado.getId())).withRel("delete_user"),
-            linkTo(methodOn(UsuarioController.class).cambiarRol(actualizado.getId(), null)).withSelfRel()); // Un self-link para la operación de cambiar rol
+            linkTo(methodOn(UsuarioController.class).cambiarRol(actualizado.getId(), null)).withRel("change_role")); // Este link puede quedarse si quieres un enlace a la operación de cambio de rol, pero no como self-rel
 
         return new ResponseEntity<>(entityModel, HttpStatus.OK);
     }

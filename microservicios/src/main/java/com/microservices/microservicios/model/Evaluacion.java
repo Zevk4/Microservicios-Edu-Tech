@@ -2,6 +2,7 @@ package com.microservices.microservicios.model;
 
 import java.time.LocalDateTime;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,6 +20,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "evaluacion")
+@Schema(description = "Información de Evaluacion")
 public class Evaluacion {
 
     @Id

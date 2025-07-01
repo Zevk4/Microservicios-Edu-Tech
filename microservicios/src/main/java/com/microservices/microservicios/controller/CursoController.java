@@ -41,7 +41,7 @@ public class CursoController {
 
     @Operation(summary = "Obtener todos los cursos", description = "Retorna una lista de todos los cursos disponibles, con enlaces HATEOAS para cada curso y la colección.")
     @ApiResponse(responseCode = "200", description = "Lista de cursos obtenida exitosamente",
-                 content = @Content(mediaType = "application/json", schema = @Schema(implementation = CollectionModel.class))) // Actualizar esquema para HATEOAS
+                 content = @Content(mediaType = "application/json", schema = @Schema(implementation = CollectionModel.class)))
     @GetMapping("/vercursos")
     public CollectionModel<EntityModel<Curso>> verCursos(){
         List<EntityModel<Curso>> cursos = cursService.verCursos().stream()
@@ -54,8 +54,8 @@ public class CursoController {
     }
 
     @Operation(summary = "Crear un nuevo curso", description = "Crea un nuevo curso y lo guarda en la base de datos, retornando el curso creado con enlaces HATEOAS.")
-    @ApiResponse(responseCode = "201", description = "Curso creado exitosamente", // Cambiado a 201 Created
-                 content = @Content(mediaType = "application/json", schema = @Schema(implementation = EntityModel.class))) // Actualizar esquema
+    @ApiResponse(responseCode = "201", description = "Curso creado exitosamente", 
+                 content = @Content(mediaType = "application/json", schema = @Schema(implementation = EntityModel.class))) 
     @ApiResponse(responseCode = "400", description = "Solicitud inválida (ej. datos del curso incompletos)",
                  content = @Content(mediaType = "application/json"))
     @PostMapping("/ingresarCurso")
@@ -65,7 +65,7 @@ public class CursoController {
         EntityModel<Curso> entityModel = EntityModel.of(newCurso,
             linkTo(methodOn(CursoController.class).buscarId(newCurso.getId())).withSelfRel(),
             linkTo(methodOn(CursoController.class).verCursos()).withRel("all_courses"),
-            linkTo(methodOn(CursoController.class).actualizar(null, newCurso.getId())).withRel("update_course"), // 'null' para RequestBody
+            linkTo(methodOn(CursoController.class).actualizar(null, newCurso.getId())).withRel("update_course"),
             linkTo(methodOn(CursoController.class).eliminar(newCurso.getId())).withRel("delete_course"));
 
         return new ResponseEntity<>(entityModel, HttpStatus.CREATED); // Devolver 201 Created
@@ -73,7 +73,7 @@ public class CursoController {
 
     @Operation(summary = "Buscar curso por ID", description = "Retorna un curso específico por su ID, con enlaces HATEOAS.")
     @ApiResponse(responseCode = "200", description = "Curso encontrado exitosamente",
-                 content = @Content(mediaType = "application/json", schema = @Schema(implementation = EntityModel.class))) // Actualizar esquema
+                 content = @Content(mediaType = "application/json", schema = @Schema(implementation = EntityModel.class))) 
     @ApiResponse(responseCode = "404", description = "Curso no encontrado",
                  content = @Content(mediaType = "application/json"))
     @GetMapping("/{id}")
@@ -94,7 +94,7 @@ public class CursoController {
 
     @Operation(summary = "Actualizar un curso por ID", description = "Actualiza la información de un curso existente, retornando el curso actualizado con enlaces HATEOAS.")
     @ApiResponse(responseCode = "200", description = "Curso actualizado exitosamente",
-                 content = @Content(mediaType = "application/json", schema = @Schema(implementation = EntityModel.class))) // Actualizar esquema
+                 content = @Content(mediaType = "application/json", schema = @Schema(implementation = EntityModel.class))) 
     @ApiResponse(responseCode = "404", description = "Curso no encontrado",
                  content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "400", description = "Solicitud inválida (ej. datos del curso incompletos)",
@@ -105,7 +105,7 @@ public class CursoController {
             @Parameter(description = "ID del curso a actualizar", required = true)
             @PathVariable Long id){
         Curso updatedCurso = cursService.actualizarCurso(curs, id);
-        if (updatedCurso == null) { // Asumiendo que actualizarCurso devuelve null si no encuentra el ID
+        if (updatedCurso == null) { 
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         EntityModel<Curso> entityModel = EntityModel.of(updatedCurso,
@@ -123,7 +123,7 @@ public class CursoController {
     @ApiResponse(responseCode = "404", description = "Curso no encontrado para eliminar",
                  content = @Content(mediaType = "text/plain", schema = @Schema(type = "string")))
     @DeleteMapping("/eliminar{id}")
-    public ResponseEntity<String> eliminar( // Cambiado a ResponseEntity<String> 
+    public ResponseEntity<String> eliminar( 
             @Parameter(description = "ID del curso a eliminar", required = true)
             @PathVariable("id") Long id){
         boolean ok = this.cursService.eliminarPorId(id);

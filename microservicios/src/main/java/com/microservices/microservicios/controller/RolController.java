@@ -43,15 +43,15 @@ public class RolController {
     @Operation(summary = "Obtener todos los roles", description = "Retorna una lista de todos los roles disponibles en el sistema, con enlaces HATEOAS para cada rol y la colección.")
     @ApiResponse(responseCode = "200", description = "Lista de roles obtenida exitosamente",
                  content = @Content(mediaType = "application/json", schema = @Schema(implementation = CollectionModel.class)))
-    @GetMapping("/verrol")
-    public CollectionModel<EntityModel<Rol>> verRoles(){ // Método renombrado de 'verCursos' a 'verRoles'
+    @GetMapping("/roles") 
+    public CollectionModel<EntityModel<Rol>> verRoles(){
         List<EntityModel<Rol>> roles = rolService.verRoles().stream()
             .map(rol -> EntityModel.of(rol,
-                linkTo(methodOn(RolController.class).buscarRolPorId(rol.getId())).withSelfRel(), // Actualizado el nombre del método
-                linkTo(methodOn(RolController.class).verRoles()).withRel("all_roles"))) // Actualizado el nombre del método
+                linkTo(methodOn(RolController.class).buscarRolPorId(rol.getId())).withSelfRel(),
+                linkTo(methodOn(RolController.class).verRoles()).withRel("all_roles")))
             .collect(Collectors.toList());
 
-        return CollectionModel.of(roles, linkTo(methodOn(RolController.class).verRoles()).withSelfRel()); // Actualizado el nombre del método
+        return CollectionModel.of(roles, linkTo(methodOn(RolController.class).verRoles()).withSelfRel());
     }
 
     @Operation(summary = "Crear un nuevo rol", description = "Crea un nuevo rol y lo guarda en la base de datos, retornando el rol creado con enlaces HATEOAS.")
@@ -59,13 +59,13 @@ public class RolController {
                  content = @Content(mediaType = "application/json", schema = @Schema(implementation = EntityModel.class)))
     @ApiResponse(responseCode = "400", description = "Solicitud inválida (ej. datos del rol incompletos)",
                  content = @Content(mediaType = "application/json"))
-    @PostMapping("/saverol")
-    public ResponseEntity<EntityModel<Rol>> crearRol( // Método renombrado de 'crearCurso' a 'crearRol'
+    @PostMapping("/roles") 
+    public ResponseEntity<EntityModel<Rol>> crearRol(
             @RequestBody Rol rol){
         Rol newRol = rolService.guardar(rol);
         EntityModel<Rol> entityModel = EntityModel.of(newRol,
-            linkTo(methodOn(RolController.class).buscarRolPorId(newRol.getId())).withSelfRel(), // Actualizado el nombre del método
-            linkTo(methodOn(RolController.class).verRoles()).withRel("all_roles"), // Actualizado el nombre del método
+            linkTo(methodOn(RolController.class).buscarRolPorId(newRol.getId())).withSelfRel(),
+            linkTo(methodOn(RolController.class).verRoles()).withRel("all_roles"),
             linkTo(methodOn(RolController.class).actualizar(null, newRol.getId())).withRel("update_role"),
             linkTo(methodOn(RolController.class).eliminar(newRol.getId())).withRel("delete_role"));
 
@@ -78,15 +78,15 @@ public class RolController {
     @ApiResponse(responseCode = "404", description = "Rol no encontrado",
                  content = @Content(mediaType = "application/json"))
     @GetMapping("/{id}")
-    public ResponseEntity<EntityModel<Rol>> buscarRolPorId( // Método renombrado de 'buscarId' a 'buscarRolPorId'
+    public ResponseEntity<EntityModel<Rol>> buscarRolPorId(
             @Parameter(description = "ID del rol a buscar", required = true)
             @PathVariable("id") Long id){
         Optional<Rol> rol = rolService.buscarRoles(id);
 
         return rol.map(r -> {
             EntityModel<Rol> entityModel = EntityModel.of(r,
-                linkTo(methodOn(RolController.class).buscarRolPorId(r.getId())).withSelfRel(), // Actualizado el nombre del método
-                linkTo(methodOn(RolController.class).verRoles()).withRel("all_roles"), // Actualizado el nombre del método
+                linkTo(methodOn(RolController.class).buscarRolPorId(r.getId())).withSelfRel(),
+                linkTo(methodOn(RolController.class).verRoles()).withRel("all_roles"),
                 linkTo(methodOn(RolController.class).actualizar(null, r.getId())).withRel("update_role"),
                 linkTo(methodOn(RolController.class).eliminar(r.getId())).withRel("delete_role"));
             return new ResponseEntity<>(entityModel, HttpStatus.OK);
@@ -100,7 +100,7 @@ public class RolController {
                  content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "400", description = "Solicitud inválida (ej. datos del rol incompletos)",
                  content = @Content(mediaType = "application/json"))
-    @PutMapping(path = "{id}")
+    @PutMapping("/{id}") 
     public ResponseEntity<EntityModel<Rol>> actualizar(
             @RequestBody Rol rol,
             @Parameter(description = "ID del rol a actualizar", required = true)
@@ -110,9 +110,9 @@ public class RolController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         EntityModel<Rol> entityModel = EntityModel.of(updatedRol,
-            linkTo(methodOn(RolController.class).buscarRolPorId(updatedRol.getId())).withSelfRel(), // Actualizado el nombre del método
-            linkTo(methodOn(RolController.class).verRoles()).withRel("all_roles"), // Actualizado el nombre del método
-            linkTo(methodOn(RolController.class).crearRol(null)).withRel("create_role"), // Actualizado el nombre del método
+            linkTo(methodOn(RolController.class).buscarRolPorId(updatedRol.getId())).withSelfRel(),
+            linkTo(methodOn(RolController.class).verRoles()).withRel("all_roles"),
+            linkTo(methodOn(RolController.class).crearRol(null)).withRel("create_role"),
             linkTo(methodOn(RolController.class).eliminar(updatedRol.getId())).withRel("delete_role"));
 
         return new ResponseEntity<>(entityModel, HttpStatus.OK);
@@ -123,7 +123,7 @@ public class RolController {
                  content = @Content(mediaType = "text/plain", schema = @Schema(type = "string")))
     @ApiResponse(responseCode = "404", description = "Rol no encontrado para eliminar",
                  content = @Content(mediaType = "text/plain", schema = @Schema(type = "string")))
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}") 
     public ResponseEntity<String> eliminar(
             @Parameter(description = "ID del rol a eliminar", required = true)
             @PathVariable("id") Long id){

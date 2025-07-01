@@ -8,8 +8,8 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.12</version>
-        <relativePath/>
+        <version>3.3.12</version> <!-- Versión de Spring Boot -->
+        <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <groupId>com.microservices</groupId>
@@ -19,27 +19,32 @@
     <description>Demo project for Spring Boot</description>
 
     <properties>
-        <java.version>17</java.version>
+        <java.version>22</java.version> 
         <jacoco.version>0.8.12</jacoco.version>
     </properties>
 
     <dependencies>
+        <!-- Dependencias para el funcionamiento de la aplicación principal -->
 
+        <!-- Spring Boot Starter Actuator: Para habilitar endpoints de monitoreo y gestión (ej. /actuator/health) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
+        <!-- Spring Boot Starter Data JPA: Para persistencia de datos con JPA y Hibernate -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
+        <!-- Spring Boot Starter Web: Para construir aplicaciones web y RESTful APIs con Spring MVC -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <!-- Spring Boot DevTools: Herramientas para desarrollo rápido (recarga en caliente, etc.) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
@@ -47,71 +52,81 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- Conector JDBC para MySQL: Permite a la aplicación conectarse a bases de datos MySQL -->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
             <scope>runtime</scope>
         </dependency>
 
+        <!-- Lombok: Librería para reducir código repetitivo (getters, setters, constructores, etc.) -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
+        <!-- H2 Database: Base de datos en memoria, comúnmente usada para desarrollo y pruebas.
+             El scope 'runtime' asegura que el driver esté disponible cuando se ejecuta la aplicación,
+             incluyendo cuando no hay un perfil activo o si H2 es la DB por defecto.
+             Se eliminó la dependencia duplicada con scope 'test' ya que 'runtime' es suficiente. -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
         </dependency>
 
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>5.10.0</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>5.12.0</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>net.datafaker</groupId>
-            <artifactId>datafaker</artifactId>
-            <version>2.1.0</version>
-            <scope>test</scope>
-        </dependency>
-
+        <!-- Springdoc OpenAPI Starter WebMVC UI: Para generar documentación API con Swagger UI (OpenAPI 3) -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.5.0</version>
         </dependency>
 
+        <!-- Spring Boot Starter HATEOAS: Para construir APIs RESTful siguiendo el estilo HATEOAS -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-hateoas</artifactId>
+        </dependency>
+
+        <!-- Dependencias para pruebas -->
+
+        <!-- Spring Boot Starter Test: Incluye JUnit, Mockito, Spring Test, AssertJ para pruebas unitarias e de integración -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JUnit Jupiter (API y Engine): Core de JUnit 5 para escribir y ejecutar pruebas -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <!-- La versión se gestiona por spring-boot-starter-test, puedes omitirla o dejarla si necesitas una específica -->
+            <version>5.10.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Mockito Core: Framework de mocking para pruebas unitarias -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <!-- La versión se gestiona por spring-boot-starter-test -->
+            <version>5.12.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Datafaker: Librería para generar datos de prueba falsos y realistas -->
+        <dependency>
+            <groupId>net.datafaker</groupId>
+            <artifactId>datafaker</artifactId>
+            <version>2.1.0</version>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <!-- Maven Compiler Plugin: Para configurar el compilador de Java (ej. para Lombok) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -125,6 +140,8 @@
                 </configuration>
             </plugin>
 
+            <!-- Spring Boot Maven Plugin: Para empaquetar la aplicación como un JAR ejecutable,
+                 y para configuraciones específicas de Spring Boot (ej. exclusiones de dependencias) -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -138,15 +155,17 @@
                 </configuration>
             </plugin>
 
+            <!-- Maven Surefire Plugin: Para ejecutar las pruebas unitarias y de integración -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0</version>
                 <configuration>
-                    <useModulePath>false</useModulePath>
+                    <useModulePath>false</useModulePath> <!-- Importante para JDK 9+ con módulos -->
                 </configuration>
             </plugin>
 
+            <!-- JaCoCo Maven Plugin: Para generar informes de cobertura de código -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>

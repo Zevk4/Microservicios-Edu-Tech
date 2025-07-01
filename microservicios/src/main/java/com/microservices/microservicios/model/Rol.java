@@ -1,5 +1,6 @@
 package com.microservices.microservicios.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,6 +16,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "rol")
 @AllArgsConstructor
 @NoArgsConstructor
+@Schema(description = "Información de Rol")
 public class Rol {
 
     @Id

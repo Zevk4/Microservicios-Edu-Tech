@@ -50,7 +50,7 @@ public class CursoControllerTest {
     void testVerCursos() throws Exception {
         Curso curso1 = new Curso();
         curso1.setId(1L);
-        curso1.setTitulo("Matematicas Avanzadas"); // Usando setTitulo
+        curso1.setTitulo("Matematicas Avanzadas"); 
         curso1.setCategoria("Ciencias");
         curso1.setDescripcion("Curso de Matematicas para ingenieros");
         curso1.setInstructor("Dr. López");
@@ -59,7 +59,7 @@ public class CursoControllerTest {
 
         Curso curso2 = new Curso();
         curso2.setId(2L);
-        curso2.setTitulo("Historia Universal"); // Usando setTitulo
+        curso2.setTitulo("Historia Universal"); 
         curso2.setCategoria("Humanidades");
         curso2.setDescripcion("Desde la antigüedad hasta el presente");
         curso2.setInstructor("Dra. García");
@@ -74,10 +74,10 @@ public class CursoControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded.cursoList", hasSize(2)))
-                .andExpect(jsonPath("$._embedded.cursoList[0].titulo", is("Matematicas Avanzadas"))) // Verificando .titulo
-                .andExpect(jsonPath("$._embedded.cursoList[0].categoria", is("Ciencias"))) // Verificando .categoria
-                .andExpect(jsonPath("$._embedded.cursoList[1].titulo", is("Historia Universal"))) // Verificando .titulo
-                .andExpect(jsonPath("$._embedded.cursoList[1].price", is(50.00))) // Verificando .price
+                .andExpect(jsonPath("$._embedded.cursoList[0].titulo", is("Matematicas Avanzadas"))) 
+                .andExpect(jsonPath("$._embedded.cursoList[0].categoria", is("Ciencias"))) 
+                .andExpect(jsonPath("$._embedded.cursoList[1].titulo", is("Historia Universal"))) 
+                .andExpect(jsonPath("$._embedded.cursoList[1].price", is(50.00))) 
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/curso/vercursos")));
 
         verify(cursService, times(1)).verCursos();
@@ -87,7 +87,7 @@ public class CursoControllerTest {
     void testBuscarIdExistente() throws Exception {
         Curso curso = new Curso();
         curso.setId(1L);
-        curso.setTitulo("Programacion Java"); // Usando setTitulo
+        curso.setTitulo("Programacion Java"); 
         curso.setCategoria("Programación");
         curso.setDescripcion("Curso completo de Java para desarrolladores");
         curso.setInstructor("Ana Ramirez");
@@ -100,8 +100,8 @@ public class CursoControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1)))
-                .andExpect(jsonPath("$.titulo", is("Programacion Java"))) // Verificando .titulo
-                .andExpect(jsonPath("$.price", is(99.99))) // Verificando .price
+                .andExpect(jsonPath("$.titulo", is("Programacion Java"))) 
+                .andExpect(jsonPath("$.price", is(99.99))) 
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/curso/1")));
 
         verify(cursService, times(1)).buscarCurso(1L);
@@ -121,7 +121,7 @@ public class CursoControllerTest {
     @Test
     void testCrearCurso() throws Exception {
         Curso nuevoCurso = new Curso();
-        nuevoCurso.setTitulo("Bases de Datos SQL"); // Usando setTitulo
+        nuevoCurso.setTitulo("Bases de Datos SQL"); 
         nuevoCurso.setCategoria("Bases de Datos");
         nuevoCurso.setDescripcion("Introduccion a SQL y diseño de bases de datos");
         nuevoCurso.setInstructor("Carlos Soto");
@@ -130,7 +130,7 @@ public class CursoControllerTest {
 
         Curso cursoGuardado = new Curso();
         cursoGuardado.setId(3L);
-        cursoGuardado.setTitulo("Bases de Datos SQL"); // Usando setTitulo
+        cursoGuardado.setTitulo("Bases de Datos SQL");
         cursoGuardado.setCategoria("Bases de Datos");
         cursoGuardado.setDescripcion("Introduccion a SQL y diseño de bases de datos");
         cursoGuardado.setInstructor("Carlos Soto");
@@ -144,8 +144,8 @@ public class CursoControllerTest {
                 .content(objectMapper.writeValueAsString(nuevoCurso)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", is(3)))
-                .andExpect(jsonPath("$.titulo", is("Bases de Datos SQL"))) // Verificando .titulo
-                .andExpect(jsonPath("$.price", is(60.00))) // Verificando .price
+                .andExpect(jsonPath("$.titulo", is("Bases de Datos SQL"))) 
+                .andExpect(jsonPath("$.price", is(60.00))) 
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/curso/3")));
 
         verify(cursService, times(1)).guardar(any(Curso.class));
@@ -155,7 +155,7 @@ public class CursoControllerTest {
     void testActualizarCursoExistente() throws Exception {
         Curso cursoActualizado = new Curso();
         cursoActualizado.setId(1L);
-        cursoActualizado.setTitulo("Matematicas Aplicadas"); // Usando setTitulo
+        cursoActualizado.setTitulo("Matematicas Aplicadas"); 
         cursoActualizado.setCategoria("Ciencias");
         cursoActualizado.setDescripcion("Curso de Matematicas enfocado en aplicaciones");
         cursoActualizado.setInstructor("Dr. López");
@@ -169,8 +169,8 @@ public class CursoControllerTest {
                 .content(objectMapper.writeValueAsString(cursoActualizado)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1)))
-                .andExpect(jsonPath("$.titulo", is("Matematicas Aplicadas"))) // Verificando .titulo
-                .andExpect(jsonPath("$.price", is(80.00))) // Verificando .price
+                .andExpect(jsonPath("$.titulo", is("Matematicas Aplicadas"))) 
+                .andExpect(jsonPath("$.price", is(80.00))) 
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/curso/1")));
 
         verify(cursService, times(1)).actualizarCurso(any(Curso.class), eq(1L));
@@ -179,7 +179,7 @@ public class CursoControllerTest {
     @Test
     void testActualizarCursoNoExistente() throws Exception {
         Curso cursoParaActualizar = new Curso();
-        cursoParaActualizar.setTitulo("Inexistente"); // Usando setTitulo
+        cursoParaActualizar.setTitulo("Inexistente");
         cursoParaActualizar.setDescripcion("Este curso no existe");
         cursoParaActualizar.setPrice(0.00);
 

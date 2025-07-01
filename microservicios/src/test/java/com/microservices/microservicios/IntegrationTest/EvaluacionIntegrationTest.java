@@ -42,8 +42,6 @@ public class EvaluacionIntegrationTest {
     void setUp() {
         evaluacionRepository.deleteAll(); // Limpiar evaluaciones
         cursoRepository.deleteAll();      // Limpiar cursos
-        // Asegúrate de que el estado inicial sea consistente, por ejemplo,
-        // puedes guardar un curso válido para otros tests si los necesitas.
         cursoExistente = new Curso("Curso Base", "Programación", "Descripción", "Instructor Test", 100.0, 4.5);
         cursoRepository.save(cursoExistente); // Persistir un curso válido para que otros tests puedan usarlo
     }

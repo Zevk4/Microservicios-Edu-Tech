@@ -43,10 +43,8 @@ public class RolServiceTest {
         // Configura el mock para que cuando se llame a save, devuelva rolGuardado
         when(rolRepo.save(any(Rol.class))).thenReturn(rolGuardado);
 
-        // Act
         Rol resultado = rolService.guardar(rolEntrada);
 
-        // Assert
         assertNotNull(resultado);
         assertEquals(1L, resultado.getId());
         assertEquals("EDITOR", resultado.getNombre());
@@ -56,7 +54,6 @@ public class RolServiceTest {
 
     @Test
     void testVerRoles() {
-        // Arrange
         Rol rol1 = new Rol("ADMIN");
         rol1.setId(1L);
         Rol rol2 = new Rol("USER");
