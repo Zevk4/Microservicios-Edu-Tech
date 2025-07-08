@@ -18,21 +18,31 @@ import lombok.NoArgsConstructor;
 @Table(name = "usuario")
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(description = "Información de Usuario")
+@Schema(description = "Representa la información de un usuario registrado en la plataforma Edu-Tech.")
 public class Usuario {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "Identificador único del usuario.", example = "1")
     private Long id;
+
     @Column
+    @Schema(description = "Nombre completo del usuario.", example = "Juan Pérez")
     private String nombre;
+
     @Column(unique = true)
+    @Schema(description = "Dirección de correo electrónico única del usuario.", example = "juan.perez@example.com")
     private String email;
+
     @Column
+    @Schema(description = "Contraseña del usuario.", example = "hashed_password123", accessMode = Schema.AccessMode.WRITE_ONLY)
+    // Usaremos WRITE_ONLY para que no se muestre en respuestas GET, pero sí se pueda enviar en PUT/POST
     private String password;
-    @ManyToOne  // Relación muchos-a-uno con Rol
-    @JoinColumn(name = "rol_id")  // Nombre de la columna FK en la tabla usuario
+
+    @ManyToOne
+    @JoinColumn(name = "rol_id") // Nombre de la columna FK en la tabla usuario
+    @Schema(description = "El rol asignado al usuario (ej. ADMIN, ESTUDIANTE, INSTRUCTOR)",
+            implementation = Rol.class)
     private Rol rol;
 
     // Constructor sin id para crear un usuario
@@ -43,5 +53,4 @@ public class Usuario {
         this.password = password;
         this.rol = rol;
     }
-
 }

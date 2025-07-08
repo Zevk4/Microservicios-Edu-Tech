@@ -16,13 +16,16 @@ import lombok.NoArgsConstructor;
 @Table(name = "rol")
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(description = "Información de Rol")
+@Schema(description = "Representa un rol de usuario dentro del sistema, definiendo sus permisos o categoría.")
 public class Rol {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "Identificador único del rol.", example = "1")
     private Long id;
+
     @Column(unique = true)
+    @Schema(description = "Nombre único del rol.", example = "INSTRUCTOR", maxLength = 50)
     private String nombre;
 
     //Constructor solo con el nombre
