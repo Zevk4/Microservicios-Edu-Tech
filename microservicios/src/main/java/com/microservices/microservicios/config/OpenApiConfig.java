@@ -13,7 +13,7 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("API de Gestión de Cursos Edu-Tech") // Titulo 
+                        .title("API de Gestión Edu-Tech") // Titulo 
                         .description("API RESTful para la gestión de usuarios, roles, cursos y evaluaciones en la plataforma Edu-Tech.") // Descripción de la API
                         .version("3.2.2") // Versión de la API
                         .contact(new Contact()
