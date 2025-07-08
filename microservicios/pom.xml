@@ -9,7 +9,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.3.12</version> <!-- Versión de Spring Boot -->
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/> 
     </parent>
 
     <groupId>com.microservices</groupId>
@@ -68,8 +68,7 @@
 
         <!-- H2 Database: Base de datos en memoria, comúnmente usada para desarrollo y pruebas.
              El scope 'runtime' asegura que el driver esté disponible cuando se ejecuta la aplicación,
-             incluyendo cuando no hay un perfil activo o si H2 es la DB por defecto.
-             Se eliminó la dependencia duplicada con scope 'test' ya que 'runtime' es suficiente. -->
+             incluyendo cuando no hay un perfil activo o si H2 es la DB por defecto. -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>

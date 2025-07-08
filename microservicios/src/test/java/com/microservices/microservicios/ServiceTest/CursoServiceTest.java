@@ -35,23 +35,6 @@ public class CursoServiceTest {
     }
 
     @Test
-    void testGuardarCurso() {
-        Curso cursoEntrada = new Curso("Java Avanzado", "Programación", "Curso completo de Java", "Dr. Code", 199.99, 4.8);
-        Curso cursoGuardado = new Curso("Java Avanzado", "Programación", "Curso completo de Java", "Dr. Code", 199.99, 4.8);
-        cursoGuardado.setId(1L); // Simula que el repositorio le asigna un ID
-
-        // Configura el mock para que cuando se llame a save, devuelva cursoGuardado
-        when(cursRepo.save(any(Curso.class))).thenReturn(cursoGuardado);
-        Curso resultado = cursoService.guardar(cursoEntrada);
-        assertNotNull(resultado);
-        assertEquals(1L, resultado.getId());
-        assertEquals("Java Avanzado", resultado.getTitulo());
-        assertEquals("Dr. Code", resultado.getInstructor());
-        // Verifica que el método save del repositorio fue llamado exactamente una vez con cualquier objeto Curso
-        verify(cursRepo, times(1)).save(any(Curso.class));
-    }
-
-    @Test
     void testVerCursos() {
         Curso cur1 = new Curso("Python Básico", "Programación", "Introducción a Python", "Ana Smith", 49.99, 4.0);
         cur1.setId(1L);
@@ -72,6 +55,24 @@ public class CursoServiceTest {
         // Verifica que el método findAll del repositorio fue llamado exactamente una vez
         verify(cursRepo, times(1)).findAll();
     }
+
+    @Test
+    void testGuardarCurso() {
+        Curso cursoEntrada = new Curso("Java Avanzado", "Programación", "Curso completo de Java", "Dr. Code", 199.99, 4.8);
+        Curso cursoGuardado = new Curso("Java Avanzado", "Programación", "Curso completo de Java", "Dr. Code", 199.99, 4.8);
+        cursoGuardado.setId(1L); // Simula que el repositorio le asigna un ID
+
+        // Configura el mock para que cuando se llame a save, devuelva cursoGuardado
+        when(cursRepo.save(any(Curso.class))).thenReturn(cursoGuardado);
+        Curso resultado = cursoService.guardar(cursoEntrada);
+        assertNotNull(resultado);
+        assertEquals(1L, resultado.getId());
+        assertEquals("Java Avanzado", resultado.getTitulo());
+        assertEquals("Dr. Code", resultado.getInstructor());
+        // Verifica que el método save del repositorio fue llamado exactamente una vez con cualquier objeto Curso
+        verify(cursRepo, times(1)).save(any(Curso.class));
+    }
+
 
     @Test
     void testBuscarCursoExistente() {
