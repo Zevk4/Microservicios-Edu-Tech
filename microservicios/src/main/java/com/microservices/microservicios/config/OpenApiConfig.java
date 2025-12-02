@@ -13,12 +13,12 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("API de Gestión Edu-Tech") // Titulo 
-                        .description("API RESTful para la gestión de usuarios, roles, cursos y evaluaciones en la plataforma Edu-Tech.") // Descripción de la API
-                        .version("3.2.2") // Versión de la API
+                        .title("API de Gestión Level-UP") // Titulo 
+                        .description("API RESTful para la gestión de usuarios, productos y carrito de compras en Level-UP.") // Descripción de la API
+                        .version("3.5.2") // Versión de la API
                         .contact(new Contact()
-                                .name("Equipo de X") // Nombre de contacto
-                                .email("equipox2319@duocuc.cl")) // Email de contacto
+                                .name("Equipo de Persona") // Nombre de contacto
+                                .email("experson@duocuc.cl")) // Email de contacto
                         );
     }
 }

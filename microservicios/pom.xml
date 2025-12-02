@@ -88,6 +88,39 @@
             <artifactId>spring-boot-starter-hateoas</artifactId>
         </dependency>
 
+        <!-- Spring Boot Starter Security: Para seguridad de aplicaciones web con Spring Security -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <!-- Spring Boot Starter Validation: Para validación de datos (ej. con @Valid en DTOs) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!-- JJWT API: Interfaz API para JSON Web Tokens (JWT) -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>0.11.5</version> <!-- Usar una versión compatible con Spring Boot 3.x -->
+        </dependency>
+        <!-- JJWT Impl: Implementación de JWT (requiere jjwt-api) -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>0.11.5</version>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- JJWT Jackson: Para serialización/deserialización JSON (requiere jjwt-api y jjwt-impl) -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>0.11.5</version>
+            <scope>runtime</scope>
+        </dependency>
+
         <!-- Dependencias para pruebas -->
 
         <!-- Spring Boot Starter Test: Incluye JUnit, Mockito, Spring Test, AssertJ para pruebas unitarias e de integración -->
